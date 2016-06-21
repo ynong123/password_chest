@@ -196,7 +196,6 @@ minetest.register_node("password_chest:password_chest", {
 		oldmetadata:set_string("password", "")
 		oldmetadata:set_string("salt", "")
 		oldmetadata:set_string("owner", "")
-		oldmetadata:set_int("id", 0)
 		oldmetadata:set_int("locked", 0)
 	end
 })
