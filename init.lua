@@ -128,6 +128,7 @@ minetest.register_node("password_chest:password_chest", {
 												minetest.chat_send_player(player:get_player_name(), "Your password is incorrect. Please type again.")
 												return false
 											end
+											minetest.chat_send_player(player:get_player_name(), "Your chest password has been changed.")
 											return true
 										end
 									)

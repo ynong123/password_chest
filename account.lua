@@ -98,3 +98,5 @@ function account.check(id, password)
 	local password_hashed = minetest.get_password_hash(salt, password)
 	return password_hashed == account.password[id]
 end
+
+account.init()
