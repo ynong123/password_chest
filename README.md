@@ -6,7 +6,7 @@ Adds password chest that can protect your items.
 
 **Version:** 1.1
 
-**License:** LGPL 2.1+ for code, CC-BY-SA 3.0 UNPORTED for textures.
+**License:** [LGPL 2.1+](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) for code, [CC-BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) UNPORTED for textures.
 
 **Depends:** default (can be found in minetest_game)
 
