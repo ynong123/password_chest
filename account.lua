@@ -4,7 +4,8 @@
 account = {
 	password = {},
 	salt = {},
-	counter = 1
+	pos = {},
+	counter = 0
 }
 
 function account.genSalt()
@@ -53,6 +54,7 @@ function account.init()
 		if type(data) == "table" then
 			account.password = data.password
 			account.salt = data.salt
+			account.pos = data.pos
 			account.counter = data.counter
 		end
 	end
@@ -65,6 +67,7 @@ function account.save()
 			minetest.serialize({
 				password = account.password,
 				salt = account.salt,
+				pos = account.pos,
 				counter = account.counter
 			})
 		)
@@ -72,13 +75,28 @@ function account.save()
 	end
 end
 
-function account.new(password)
+function account.new(password, pos)
 	local salt = account.genSalt()
+	account.counter = account.counter + 1
 	account.password[account.counter] = minetest.get_password_hash(salt, password)
 	account.salt[account.counter] = salt
-	account.counter = account.counter + 1
+	account.pos[account.counter] = pos
 	account.save()
-	return account.counter - 1
+end
+
+function account.delete(id)
+	local meta = minetest.get_meta(account.pos[id])
+	meta:set_string("infotext", "Password Chest (unconfigured)")
+	meta:set_string("owner", "")
+	meta:set_int("id", 0)
+	for i = id, account.counter - 1, 1 do
+		account.password[i] = account.password[i + 1]
+		account.salt[i] = account.salt[i + 1]
+		account.pos[i] = account.pos[i + 1]
+		local meta = minetest.get_meta(account.pos[i + 1])
+		meta:set_int("id", i)
+	end
+	account.counter = account.counter - 1
 end
 
 function account.change(id, old_password, new_password)
@@ -97,6 +115,27 @@ function account.check(id, password)
 	local salt = account.salt[id]
 	local password_hashed = minetest.get_password_hash(salt, password)
 	return password_hashed == account.password[id]
+end
+
+function account.formspec()
+	local ret = "size[12,8]label[0,0;Password Chest Database]"
+	ret = ret .. "tablecolumns[text;text;text;text;text;text;text;text]"
+	ret = ret .. "table[0.5,1;10.5,6;table;ID,,Player,X,Y,Z,Salt,Password (Hashed)"
+	for i = 1, account.counter, 1 do
+		local meta = minetest.get_meta(account.pos[i])
+		ret = ret .. 
+			"," .. i ..
+			",," ..
+			meta:get_string("owner") ..
+			"," .. account.pos[i].x ..
+			"," .. account.pos[i].y ..
+			"," .. account.pos[i].z ..
+			"," .. account.salt[i] ..
+			"," .. account.password[i]
+	end
+	ret = ret .. ";-1]"
+	ret = ret .. "button_exit[0.5,7;2,1;close;Close]"
+	return ret
 end
 
 account.init()
