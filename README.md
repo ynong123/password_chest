@@ -23,3 +23,21 @@ Report bugs or request help on the [forum topic](https://forum.minetest.net/view
 ##Updates
 
 Adds chat command "/password_chest".
+
+##Tutorials
+
+###Crafting
+
+`Wood``Gold Ingot``Wood`
+
+`Wood``Mese Block``Wood` --> `Password Chest`
+
+`Wood``Wood``Wood`
+
+###Chat Commands
+
+`/password_chest reset`: Reset all of password chests in the world.
+
+`/password_chest database`: Open Password Chest Database. It will looks like the screenshot below:
+
+![Password Chest Database](http://i.imgur.com/CpnAzkY.png)
