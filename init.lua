@@ -3,17 +3,11 @@
 
 dofile(minetest.get_modpath("password_chest") .. "/account.lua")
 
-
-minetest.register_privilege("password_chest", {
-	description = "Can reset and access password chest database.",
-	give_to_singleplayer = true
-})
-
 minetest.register_chatcommand("password_chest", {
 	params = "[/reset/database]",
 	description = "Use \"/password_chest reset\" to reset all of the password chests and \"/password_chest database\" to get the password database.",
 	privs = {
-		password_chest = true
+		admin = true
 	},
 	func = function(name, param)
 		if param == "reset" then
