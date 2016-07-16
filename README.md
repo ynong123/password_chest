@@ -28,11 +28,11 @@ Adds chat command "/password_chest".
 
 ###Crafting
 
-`Wood``Gold Ingot``Wood`
+`Wood` `Gold Ingot` `Wood`
 
-`Wood``Mese Block``Wood` --> `Password Chest`
+`Wood` `Mese Block` `Wood` --> `Password Chest`
 
-`Wood``Wood``Wood`
+`Wood` `Wood ``Wood`
 
 ###Chat Commands
 
