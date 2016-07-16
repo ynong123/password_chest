@@ -41,3 +41,5 @@ Adds chat command "/password_chest".
 `/password_chest database`: Open Password Chest Database. It will looks like the screenshot below:
 
 ![Password Chest Database](http://i.imgur.com/CpnAzkY.png)
+
+**Note: Only admins can use these commands.**
