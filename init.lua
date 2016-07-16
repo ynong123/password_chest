@@ -3,6 +3,44 @@
 
 dofile(minetest.get_modpath("password_chest") .. "/account.lua")
 
+
+minetest.register_privilege("password_chest", {
+	description = "Can reset and access password chest database.",
+	give_to_singleplayer = true
+})
+
+minetest.register_chatcommand("password_chest", {
+	params = "[/reset/database]",
+	description = "Use \"/password_chest reset\" to reset all of the password chests and \"/password_chest database\" to get the password database.",
+	privs = {
+		password_chest = true
+	},
+	func = function(name, param)
+		if param == "reset" then
+			os.remove(minetest.get_worldpath() .. "password_chest_data.txt")
+			for i = 1, account.counter, 1 do
+				local meta = minetest.get_meta(account.pos[i])
+				meta:set_string("infotext", "Password Chest (unconfigured)")
+				meta:set_string("owner", "")
+				meta:set_int("id", 0)
+			end
+			return true, "Password Chest Database has been reset successfully. All password chests will become unconfigured."
+		elseif param == "database" then
+			minetest.show_formspec(name, "password_chest:database", account.formspec())
+			minetest.register_on_player_receive_fields(
+				function(player, formname, fields)
+					if formname ~= "password_chest:database" then
+						return false, ""
+					end
+					if fields.close then
+						return true, ""
+					end
+				end
+			)
+		end
+	end
+})
+
 local function password_chest_formspec(pos)
 	local spos = pos.x .. "," .. pos.y .. "," .. pos.z
 	local formspec =
@@ -65,23 +103,23 @@ minetest.register_node("password_chest:password_chest", {
 						return false
 					end
 					meta:set_string("infotext", "Password Chest (owned by " .. player:get_player_name() .. ")")
-					meta:set_int("id", account.new(fields.password))
+					meta:set_int("id", account.new(fields.password, pos))
 					meta:set_string("owner", player:get_player_name())
 					minetest.chat_send_player(player:get_player_name(), "Your chest has been locked.")
 					return true
 			    end
 			)
 		else
-		    minetest.show_formspec(player:get_player_name(), "password_chest:unlock",
-			    "size[4, 4]" ..
+			minetest.show_formspec(player:get_player_name(), "password_chest:unlock",
+				"size[4, 4]" ..
 				"label[0, 0;Unlock Chest]" ..
 				"pwdfield[0.5, 2;3.5, 1;password;Password:]" ..
 				"button_exit[0, 3;2, 1;open;Open]"
 			)
 			minetest.register_on_player_receive_fields(
-			    function(player, formname, fields)
-				    if formname ~= "password_chest:unlock" then
-					    return false
+				function(player, formname, fields)
+					if formname ~= "password_chest:unlock" then
+						return false
 					end
 					if fields.password == nil then
 						return false
@@ -90,8 +128,8 @@ minetest.register_node("password_chest:password_chest", {
 						return false
 					end
 					if account.check(meta:get_int("id"), fields.password) then
-					    minetest.show_formspec(
-						    player:get_player_name(),
+						minetest.show_formspec(
+							player:get_player_name(),
 							"password_chest:password_chest_formspec",
 							password_chest_formspec(pos)
 						)
@@ -128,7 +166,6 @@ minetest.register_node("password_chest:password_chest", {
 												minetest.chat_send_player(player:get_player_name(), "Your password is incorrect. Please type again.")
 												return false
 											end
-											minetest.chat_send_player(player:get_player_name(), "Your chest password has been changed.")
 											return true
 										end
 									)
@@ -142,6 +179,7 @@ minetest.register_node("password_chest:password_chest", {
 					return true
 				end
 			)
+			end
 		end
 	end,
 	can_dig = function(pos, player)
@@ -149,9 +187,8 @@ minetest.register_node("password_chest:password_chest", {
 		return inv:is_empty() and player:get_player_name() == meta:get_string("owner")
 	end,
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		oldmetadata:set_string("infotext", "")
-		oldmetadata:set_string("owner", "")
-		oldmetadata:set_int("id", 0)
+		account.delete(oldmetadata:get_int("id"))
+		return true
 	end
 })
 
