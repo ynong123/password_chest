@@ -82,6 +82,7 @@ function account.new(password, pos)
 	account.salt[account.counter] = salt
 	account.pos[account.counter] = pos
 	account.save()
+	return account.counter
 end
 
 function account.delete(id)
