@@ -1,2 +1,1 @@
-GOOD: Adds password chest that can protect your items.
-BAD:  Password Chest for Minetest.
+Adds password chest that can protect your items.
